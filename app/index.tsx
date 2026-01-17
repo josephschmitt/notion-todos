@@ -1,17 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import { StatusSection } from '../components/status/StatusSection';
-import { Todo, StatusConfig, StatusGroup } from '../types/todo';
+import { Todo, StatusConfig, StatusGroup, CollapsedSectionsState } from '../types/todo';
 import { mockTodos } from '../mock/todoData';
 import { mockStatusConfigs } from '../mock/statusData';
+import { loadCollapsedSections, saveCollapsedSections } from '../utils/storage';
 
 export default function TodosScreen() {
   const router = useRouter();
   const [todos, setTodos] = useState<Todo[]>(mockTodos);
   const [statusConfigs] = useState<StatusConfig[]>(mockStatusConfigs);
+  const [collapsedSections, setCollapsedSections] = useState<CollapsedSectionsState>({
+    'in-progress': false,
+    'not-started': false,
+    'done': true,
+  });
+
+  // Load collapsed sections state on mount
+  useEffect(() => {
+    const loadState = async () => {
+      const savedState = await loadCollapsedSections();
+      setCollapsedSections(savedState);
+    };
+    loadState();
+  }, []);
 
   // Group todos by status
   const groupTodosByStatus = (): StatusGroup[] => {
@@ -63,14 +78,22 @@ export default function TodosScreen() {
     console.log('Pressed todo:', todo.title);
   };
 
-  const handlePressCompleteGroup = (statusId: string) => {
-    // Navigate to completed screen
-    router.push(`/completed/${statusId}`);
-  };
-
   const handleLongPressTodo = (todo: Todo) => {
     // Placeholder for future status picker menu
     console.log('Long pressed todo:', todo.title);
+  };
+
+  const handleToggleSection = async (statusId: string) => {
+    const newState = {
+      ...collapsedSections,
+      [statusId]: !collapsedSections[statusId],
+    };
+    setCollapsedSections(newState);
+    await saveCollapsedSections(newState);
+  };
+
+  const handleNavigateToStatus = (statusId: string) => {
+    router.push(`/completed/${statusId}`);
   };
 
   const statusGroups = groupTodosByStatus();
@@ -85,10 +108,11 @@ export default function TodosScreen() {
           <StatusSection
             key={group.status.id}
             statusGroup={group}
-            isComplete={group.status.category === 'complete'}
+            isCollapsed={collapsedSections[group.status.id] || false}
+            onToggleCollapse={() => handleToggleSection(group.status.id)}
+            onNavigateToStatus={() => handleNavigateToStatus(group.status.id)}
             onToggleTodo={handleToggleTodo}
             onPressTodo={handlePressTodo}
-            onPressCompleteGroup={() => handlePressCompleteGroup(group.status.id)}
             onLongPressTodo={handleLongPressTodo}
           />
         ))}
