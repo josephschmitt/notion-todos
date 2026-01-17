@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { StatusGroup, Todo } from '../../types/todo';
 import { TodoList } from '../todo/TodoList';
 
@@ -39,7 +40,12 @@ export function StatusSection({
           onPress={onToggleCollapse}
           activeOpacity={0.7}
         >
-          <Text style={styles.disclosureTriangle}>{isCollapsed ? '▸' : '▾'}</Text>
+          <Ionicons
+            name={isCollapsed ? 'chevron-forward' : 'chevron-down'}
+            size={24}
+            color="#6B7280"
+            style={styles.disclosureIcon}
+          />
           <Text style={styles.headerTitle}>{status.name}</Text>
         </TouchableOpacity>
 
@@ -50,7 +56,7 @@ export function StatusSection({
           activeOpacity={0.7}
         >
           <Text style={styles.taskCount}>{count} tasks</Text>
-          <Text style={styles.navigationChevron}>›</Text>
+          <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
         </TouchableOpacity>
       </View>
 
@@ -88,9 +94,7 @@ const styles = StyleSheet.create({
     gap: 12,
     flex: 1,
   },
-  disclosureTriangle: {
-    fontSize: 24,
-    color: '#6B7280',
+  disclosureIcon: {
     width: 24,
     marginTop: 2,
   },
@@ -107,11 +111,6 @@ const styles = StyleSheet.create({
   taskCount: {
     fontSize: 14,
     color: '#6B7280',
-  },
-  navigationChevron: {
-    fontSize: 20,
-    color: '#9CA3AF',
-    fontWeight: '300',
   },
   listContainer: {
     backgroundColor: '#ffffff',
