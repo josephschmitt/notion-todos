@@ -5,19 +5,21 @@ import { TodoList } from '../todo/TodoList';
 
 interface StatusSectionProps {
   statusGroup: StatusGroup;
-  isComplete: boolean;  // Complete category renders as link
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+  onNavigateToStatus: () => void;
   onToggleTodo: (id: string) => void;
   onPressTodo?: (todo: Todo) => void;
-  onPressCompleteGroup?: () => void;
   onLongPressTodo?: (todo: Todo) => void;  // For status picker (future)
 }
 
 export function StatusSection({
   statusGroup,
-  isComplete,
+  isCollapsed,
+  onToggleCollapse,
+  onNavigateToStatus,
   onToggleTodo,
   onPressTodo,
-  onPressCompleteGroup,
   onLongPressTodo,
 }: StatusSectionProps) {
   const { status, todos, count } = statusGroup;
@@ -27,42 +29,41 @@ export function StatusSection({
     return null;
   }
 
-  // Complete category: render as collapsible link
-  if (isComplete) {
-    return (
-      <TouchableOpacity
-        style={styles.completeLinkContainer}
-        onPress={onPressCompleteGroup}
-        activeOpacity={0.7}
-      >
-        <View style={styles.completeLinkContent}>
-          <Text style={styles.completeLinkTitle}>{status.name}</Text>
-          <View style={styles.completeLinkRight}>
-            <Text style={styles.completeLinkCount}>{count} tasks</Text>
-            <Text style={styles.chevron}>›</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-
-  // Expanded sections (To Do, In Progress): show header + todos
   return (
     <View style={styles.container}>
-      {/* Section Header */}
+      {/* Header with two tappable areas */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{status.name}</Text>
-        <Text style={styles.headerSubtitle}>{count} tasks</Text>
+        {/* Left area: Disclosure triangle + Title → Tap to collapse/expand */}
+        <TouchableOpacity
+          style={styles.headerLeft}
+          onPress={onToggleCollapse}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.disclosureTriangle}>{isCollapsed ? '▸' : '▾'}</Text>
+          <Text style={styles.headerTitle}>{status.name}</Text>
+        </TouchableOpacity>
+
+        {/* Right area: Count + Chevron → Tap to navigate */}
+        <TouchableOpacity
+          style={styles.headerRight}
+          onPress={onNavigateToStatus}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.taskCount}>{count} tasks</Text>
+          <Text style={styles.navigationChevron}>›</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Todo List with colored left border */}
-      <View style={[styles.listContainer, { borderLeftColor: status.color }]}>
-        <TodoList
-          todos={todos}
-          onToggleTodo={onToggleTodo}
-          onPressTodo={onPressTodo}
-        />
-      </View>
+      {/* Conditionally render todo list */}
+      {!isCollapsed && (
+        <View style={[styles.listContainer, { borderLeftColor: status.color }]}>
+          <TodoList
+            todos={todos}
+            onToggleTodo={onToggleTodo}
+            onPressTodo={onPressTodo}
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -72,19 +73,44 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 12,
     backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+    minHeight: 56,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flex: 1,
+  },
+  disclosureTriangle: {
+    fontSize: 16,
+    color: '#6B7280',
+    width: 20,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: '#111827',
   },
-  headerSubtitle: {
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  taskCount: {
     fontSize: 14,
     color: '#6B7280',
-    marginTop: 4,
+  },
+  navigationChevron: {
+    fontSize: 20,
+    color: '#9CA3AF',
+    fontWeight: '300',
   },
   listContainer: {
     backgroundColor: '#ffffff',
@@ -96,39 +122,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
-  },
-  completeLinkContainer: {
-    marginBottom: 16,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    height: 56,
-    justifyContent: 'center',
-  },
-  completeLinkContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-  },
-  completeLinkTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#111827',
-  },
-  completeLinkRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  completeLinkCount: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  chevron: {
-    fontSize: 24,
-    color: '#9CA3AF',
-    fontWeight: '300',
+    marginTop: 8,
   },
 });
