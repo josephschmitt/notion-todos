@@ -84,9 +84,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 8,
-    minHeight: 56,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
   headerLeft: {
     flexDirection: 'row',
@@ -113,15 +112,6 @@ const styles = StyleSheet.create({
     color: '#6B7280',
   },
   listContainer: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    overflow: 'hidden',
     borderLeftWidth: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-    marginTop: 8,
   },
 });
