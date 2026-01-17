@@ -36,14 +36,14 @@ export function CategoryFooter({ group, totalCount, onNavigate }: CategoryFooter
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 12,
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 6,
     gap: 6,
   },
   footerText: {

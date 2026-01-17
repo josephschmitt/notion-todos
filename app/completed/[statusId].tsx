@@ -108,10 +108,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingVertical: 16,
+    paddingVertical: 12,
   },
   header: {
-    marginBottom: 16,
+    marginBottom: 12,
     paddingHorizontal: 16,
   },
   title: {

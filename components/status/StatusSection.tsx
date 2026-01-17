@@ -83,14 +83,14 @@ export function StatusSection({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   headerLeft: {
     flexDirection: 'row',
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   borderContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   border: {
     height: 1,

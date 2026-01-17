@@ -71,14 +71,14 @@ export function SubStatusSection({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 12,
+    marginBottom: 8,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16, // Match task padding
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   headerLeft: {
     flexDirection: 'row',
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   borderContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   border: {
     height: 1,
