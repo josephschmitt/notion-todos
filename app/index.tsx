@@ -5,13 +5,13 @@ import { useRouter } from 'expo-router';
 
 import { StatusSection } from '../components/status/StatusSection';
 import { Todo, StatusConfig, StatusGroup, CollapsedSectionsState } from '../types/todo';
-import { mockTodos } from '../mock/todoData';
 import { mockStatusConfigs } from '../mock/statusData';
 import { loadCollapsedSections, saveCollapsedSections } from '../utils/storage';
+import { useTodos } from '../contexts/TodoContext';
 
 export default function TodosScreen() {
   const router = useRouter();
-  const [todos, setTodos] = useState<Todo[]>(mockTodos);
+  const { todos, toggleTodo } = useTodos();
   const [statusConfigs] = useState<StatusConfig[]>(mockStatusConfigs);
   const [collapsedSections, setCollapsedSections] = useState<CollapsedSectionsState>({
     'in-progress': false,
@@ -54,23 +54,7 @@ export default function TodosScreen() {
   };
 
   const handleToggleTodo = (todoId: string) => {
-    setTodos(prevTodos =>
-      prevTodos.map(todo => {
-        if (todo.id !== todoId) return todo;
-
-        // Toggle between not-started and done
-        const newStatus = todo.status === 'done' ? 'not-started' : 'done';
-        const newCategory = newStatus === 'done' ? 'complete' : 'todo';
-
-        return {
-          ...todo,
-          status: newStatus,
-          statusCategory: newCategory,
-          completed: newCategory === 'complete',
-          updatedAt: new Date(),
-        };
-      })
-    );
+    toggleTodo(todoId);
   };
 
   const handlePressTodo = (todo: Todo) => {

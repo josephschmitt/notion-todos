@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 
 import { TodoList } from '../../components/todo/TodoList';
-import { Todo, StatusConfig } from '../../types/todo';
-import { mockTodos } from '../../mock/todoData';
-import { mockStatusConfigs, getStatusById } from '../../mock/statusData';
+import { Todo } from '../../types/todo';
+import { getStatusById } from '../../mock/statusData';
+import { useTodos } from '../../contexts/TodoContext';
 
 export default function CompletedStatusScreen() {
-  const router = useRouter();
   const { statusId } = useLocalSearchParams<{ statusId: string }>();
-  const [todos, setTodos] = useState<Todo[]>(mockTodos);
-  const [statusConfigs] = useState<StatusConfig[]>(mockStatusConfigs);
+  const { todos, toggleTodo } = useTodos();
 
   // Find the status config
   const status = getStatusById(statusId || '');
@@ -21,23 +19,7 @@ export default function CompletedStatusScreen() {
   const statusTodos = todos.filter(todo => todo.status === statusId);
 
   const handleToggleTodo = (todoId: string) => {
-    setTodos(prevTodos =>
-      prevTodos.map(todo => {
-        if (todo.id !== todoId) return todo;
-
-        // Toggle between not-started and done
-        const newStatus = todo.status === 'done' ? 'not-started' : 'done';
-        const newCategory = newStatus === 'done' ? 'complete' : 'todo';
-
-        return {
-          ...todo,
-          status: newStatus,
-          statusCategory: newCategory,
-          completed: newCategory === 'complete',
-          updatedAt: new Date(),
-        };
-      })
-    );
+    toggleTodo(todoId);
   };
 
   const handlePressTodo = (todo: Todo) => {
