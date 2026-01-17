@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 
 import { SubStatusSection } from '../../components/status/SubStatusSection';
 import { Todo, CollapsedSectionsState } from '../../types/todo';
@@ -14,11 +14,29 @@ export default function CompletedStatusScreen() {
   const { statusId } = useLocalSearchParams<{ statusId: string }>();
   const { todos, toggleTodo, currentDataSourceId } = useTodos();
   const [collapsedSections, setCollapsedSections] = useState<CollapsedSectionsState>({});
+  const navigation = useNavigation();
 
   // Get current data source
   const currentDataSource = getDataSourceById(currentDataSourceId);
   const mockStatusGroups = currentDataSource?.statusGroups || [];
   const mockStatusOptions = currentDataSource?.statusOptions || [];
+
+  // Find the status group
+  const group = mockStatusGroups.find(g => g.id === statusId);
+
+  // Notion category name mapping
+  const categoryLabel = group ? {
+    'in-progress-group': 'In Progress',
+    'not-started-group': 'To-do',
+    'done-group': 'Complete',
+  }[group.id] || group.name : 'Status';
+
+  // Set navigation title
+  useEffect(() => {
+    navigation.setOptions({
+      title: categoryLabel,
+    });
+  }, [navigation, categoryLabel]);
 
   // Load collapsed sections state on mount
   useEffect(() => {
@@ -29,8 +47,7 @@ export default function CompletedStatusScreen() {
     loadState();
   }, []);
 
-  // Find the status group and build sections
-  const group = mockStatusGroups.find(g => g.id === statusId);
+  // Build sections
   const { statusSections, totalCount } = group
     ? buildStatusSections(group, mockStatusOptions, todos)
     : { statusSections: [], totalCount: 0 };
@@ -62,13 +79,6 @@ export default function CompletedStatusScreen() {
       </SafeAreaView>
     );
   }
-
-  // Notion category name mapping
-  const categoryLabel = {
-    'in-progress-group': 'In Progress',
-    'not-started-group': 'To-do',
-    'done-group': 'Complete',
-  }[group.id] || group.name;
 
   return (
     <SafeAreaView style={styles.container}>
