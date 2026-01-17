@@ -1,31 +1,57 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 
 import { TodoList } from '../../components/todo/TodoList';
-import { Todo, StatusOption } from '../../types/todo';
+import { SubStatusSection } from '../../components/status/SubStatusSection';
+import { Todo, StatusOption, StatusSectionView, CollapsedSectionsState } from '../../types/todo';
 import { getDataSourceById } from '../../config/mockDataSources';
 import { useTodos } from '../../contexts/TodoContext';
+import { loadCollapsedSections, saveCollapsedSections, getStatusOptionCollapseKey } from '../../utils/storage';
 
 export default function CompletedStatusScreen() {
   const { statusId } = useLocalSearchParams<{ statusId: string }>();
   const { todos, toggleTodo, currentDataSourceId } = useTodos();
+  const [collapsedSections, setCollapsedSections] = useState<CollapsedSectionsState>({});
 
   // Get current data source
   const currentDataSource = getDataSourceById(currentDataSourceId);
   const mockStatusGroups = currentDataSource?.statusGroups || [];
   const mockStatusOptions = currentDataSource?.statusOptions || [];
 
+  // Load collapsed sections state on mount
+  useEffect(() => {
+    const loadState = async () => {
+      const savedState = await loadCollapsedSections();
+      setCollapsedSections(savedState);
+    };
+    loadState();
+  }, []);
+
   // Find the status group
   const group = mockStatusGroups.find(g => g.id === statusId);
   const optionIds = group?.option_ids || [];
-  const options = optionIds
-    .map(id => mockStatusOptions.find(opt => opt.id === id))
-    .filter((opt): opt is StatusOption => opt !== undefined);
+  const hasMultipleOptions = optionIds.length > 1;
 
-  // Filter todos by any option in this group
-  const statusTodos = todos.filter(todo => optionIds.includes(todo.status));
+  // Build status sections
+  const statusSections: StatusSectionView[] = [];
+  let totalCount = 0;
+
+  optionIds.forEach(optionId => {
+    const option = mockStatusOptions.find(opt => opt.id === optionId);
+    if (option) {
+      const optionTodos = todos.filter(todo => todo.status === option.id);
+      if (optionTodos.length > 0) {
+        statusSections.push({
+          option,
+          todos: optionTodos,
+          count: optionTodos.length,
+        });
+        totalCount += optionTodos.length;
+      }
+    }
+  });
 
   const handleToggleTodo = (todoId: string) => {
     toggleTodo(todoId);
@@ -34,6 +60,17 @@ export default function CompletedStatusScreen() {
   const handlePressTodo = (todo: Todo) => {
     // Placeholder for future navigation to todo details
     console.log('Pressed todo:', todo.title);
+  };
+
+  const handleToggleStatusOption = async (optionId: string) => {
+    if (!group) return;
+    const key = getStatusOptionCollapseKey(group.id, optionId);
+    const newState = {
+      ...collapsedSections,
+      [key]: !collapsedSections[key],
+    };
+    setCollapsedSections(newState);
+    await saveCollapsedSections(newState);
   };
 
   if (!group) {
@@ -55,18 +92,38 @@ export default function CompletedStatusScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>{group.name}</Text>
-          <Text style={styles.count}>{statusTodos.length} tasks</Text>
+          <Text style={styles.count}>{totalCount} tasks</Text>
         </View>
 
-        {/* Todo List */}
-        {statusTodos.length > 0 ? (
-          <View style={[styles.listContainer, { borderLeftColor: group.color }]}>
-            <TodoList
-              todos={statusTodos}
-              onToggleTodo={handleToggleTodo}
-              onPressTodo={handlePressTodo}
-            />
-          </View>
+        {/* Content - nested sections or flat list */}
+        {totalCount > 0 ? (
+          hasMultipleOptions ? (
+            // Multiple status options - show nested sections
+            <>
+              {statusSections.map((section) => {
+                const collapseKey = getStatusOptionCollapseKey(group.id, section.option.id);
+                return (
+                  <SubStatusSection
+                    key={section.option.id}
+                    section={section}
+                    isCollapsed={collapsedSections[collapseKey] || false}
+                    onToggleCollapse={() => handleToggleStatusOption(section.option.id)}
+                    onToggleTodo={handleToggleTodo}
+                    onPressTodo={handlePressTodo}
+                  />
+                );
+              })}
+            </>
+          ) : (
+            // Single option - show flat list
+            <View style={[styles.listContainer, { borderLeftColor: group.color }]}>
+              <TodoList
+                todos={statusSections[0]?.todos || []}
+                onToggleTodo={handleToggleTodo}
+                onPressTodo={handlePressTodo}
+              />
+            </View>
+          )
         ) : (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>No tasks in this group</Text>
