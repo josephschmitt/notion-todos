@@ -25,7 +25,7 @@ export function CategoryFooter({ group, totalCount, onNavigate }: CategoryFooter
         activeOpacity={0.7}
       >
         <Text style={styles.footerText}>
-          View {totalCount} {categoryLabel} tasks
+          {categoryLabel}, {totalCount} tasks
         </Text>
         <Ionicons name="chevron-forward" size={16} color="#6B7280" />
       </TouchableOpacity>
