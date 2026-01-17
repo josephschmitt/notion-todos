@@ -85,13 +85,14 @@ const styles = StyleSheet.create({
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
     flex: 1,
   },
   disclosureTriangle: {
     fontSize: 24,
     color: '#6B7280',
     width: 24,
+    marginTop: 2,
   },
   headerTitle: {
     fontSize: 18,
