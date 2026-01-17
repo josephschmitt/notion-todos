@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { StatusGroup } from '@/types/todo';
+import { StatusGroup } from '../../types/todo';
 
 interface CategoryFooterProps {
   group: StatusGroup;

@@ -3,11 +3,11 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 
-import { StatusGroupContent } from '../../components/status/StatusGroupContent';
+import { SubStatusSection } from '../../components/status/SubStatusSection';
 import { Todo, CollapsedSectionsState } from '../../types/todo';
 import { getDataSourceById } from '../../config/mockDataSources';
 import { useTodos } from '../../contexts/TodoContext';
-import { loadCollapsedSections, saveCollapsedSections, getStatusOptionCollapseKey } from '../../utils/storage';
+import { loadCollapsedSections, saveCollapsedSections } from '../../utils/storage';
 import { buildStatusSections } from '../../utils/statusHelpers';
 
 export default function CompletedStatusScreen() {
@@ -45,11 +45,9 @@ export default function CompletedStatusScreen() {
   };
 
   const handleToggleStatusOption = async (optionId: string) => {
-    if (!group) return;
-    const key = getStatusOptionCollapseKey(group.id, optionId);
     const newState = {
       ...collapsedSections,
-      [key]: !collapsedSections[key],
+      [optionId]: !collapsedSections[optionId],
     };
     setCollapsedSections(newState);
     await saveCollapsedSections(newState);
@@ -77,16 +75,20 @@ export default function CompletedStatusScreen() {
           <Text style={styles.count}>{totalCount} tasks</Text>
         </View>
 
-        {/* Content - nested sections or flat list */}
+        {/* Content - render status sections */}
         {totalCount > 0 && group ? (
-          <StatusGroupContent
-            group={group}
-            statusSections={statusSections}
-            collapsedSections={collapsedSections}
-            onToggleOption={handleToggleStatusOption}
-            onToggleTodo={handleToggleTodo}
-            onPressTodo={handlePressTodo}
-          />
+          <>
+            {statusSections.map(section => (
+              <SubStatusSection
+                key={section.option.id}
+                section={section}
+                isCollapsed={collapsedSections[section.option.id] || false}
+                onToggleCollapse={() => handleToggleStatusOption(section.option.id)}
+                onToggleTodo={handleToggleTodo}
+                onPressTodo={handlePressTodo}
+              />
+            ))}
+          </>
         ) : (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>No tasks in this group</Text>
