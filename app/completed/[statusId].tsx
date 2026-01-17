@@ -63,6 +63,13 @@ export default function CompletedStatusScreen() {
     );
   }
 
+  // Notion category name mapping
+  const categoryLabel = {
+    'in-progress-group': 'In Progress',
+    'not-started-group': 'To-do',
+    'done-group': 'Complete',
+  }[group.id] || group.name;
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -71,7 +78,7 @@ export default function CompletedStatusScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>{group.name}</Text>
+          <Text style={styles.title}>{categoryLabel}</Text>
           <Text style={styles.count}>{totalCount} tasks</Text>
         </View>
 
