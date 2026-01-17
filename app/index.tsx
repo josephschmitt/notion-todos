@@ -5,7 +5,6 @@ import { useRouter } from 'expo-router';
 
 import { StatusSection } from '../components/status/StatusSection';
 import { NestedStatusSection } from '../components/status/NestedStatusSection';
-import { DevTools } from '../components/dev/DevTools';
 import {
   Todo,
   StatusGroup,
@@ -123,7 +122,6 @@ export default function TodosScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <DevTools />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}

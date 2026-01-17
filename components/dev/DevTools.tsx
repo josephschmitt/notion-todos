@@ -20,16 +20,14 @@ export function DevTools() {
 
   return (
     <>
-      <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => setPickerVisible(true)}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="hammer" size={20} color="#FFFFFF" />
-          <Text style={styles.buttonText}>DEV</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => setPickerVisible(true)}
+        activeOpacity={0.7}
+      >
+        <Ionicons name="hammer" size={20} color="#FFFFFF" />
+        <Text style={styles.buttonText}>DEV</Text>
+      </TouchableOpacity>
 
       <DataSourcePicker
         visible={pickerVisible}
@@ -42,25 +40,15 @@ export function DevTools() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    zIndex: 1000,
-  },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
     backgroundColor: '#F59E0B',
     paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginRight: 8,
   },
   buttonText: {
     color: '#FFFFFF',

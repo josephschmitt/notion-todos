@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TodoProvider } from '../contexts/TodoContext';
+import { DevTools } from '../components/dev/DevTools';
 
 export default function RootLayout() {
   return (
@@ -13,6 +14,7 @@ export default function RootLayout() {
               title: 'Todos',
               headerStyle: { backgroundColor: '#f9fafb' },
               headerTitleStyle: { fontWeight: 'bold' },
+              headerRight: () => <DevTools />,
             }}
           />
           <Stack.Screen
