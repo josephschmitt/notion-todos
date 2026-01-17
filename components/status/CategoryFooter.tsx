@@ -24,9 +24,10 @@ export function CategoryFooter({ group, totalCount, onNavigate }: CategoryFooter
         onPress={onNavigate}
         activeOpacity={0.7}
       >
-        <Text style={styles.footerText}>
-          {categoryLabel}, {totalCount} tasks
-        </Text>
+        <Text style={styles.footerText}>{categoryLabel}</Text>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>{totalCount} tasks</Text>
+        </View>
         <Ionicons name="chevron-forward" size={16} color="#6B7280" />
       </TouchableOpacity>
     </View>
@@ -43,10 +44,21 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    gap: 4,
+    gap: 6,
   },
   footerText: {
     fontSize: 14,
     color: '#6B7280',
+  },
+  badge: {
+    backgroundColor: '#E5E7EB',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  badgeText: {
+    fontSize: 12,
+    color: '#374151',
+    fontWeight: '500',
   },
 });
