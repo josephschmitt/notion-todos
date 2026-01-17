@@ -1,11 +1,32 @@
 // TypeScript interfaces designed to be compatible with Notion's database structure
 
+// Status categories (immutable, matches Notion)
+export type StatusCategory = 'todo' | 'in_progress' | 'complete';
+
+// Status configuration
+export interface StatusConfig {
+  id: string;           // e.g., 'not-started', 'in-progress', 'done'
+  name: string;         // Display name: "Not Started", "In Progress", "Done"
+  category: StatusCategory;
+  color: string;        // Hex color
+  icon?: string;        // Optional emoji
+}
+
+// Status group for rendering
+export interface StatusGroup {
+  status: StatusConfig;
+  todos: Todo[];
+  count: number;
+}
+
 export interface Todo {
   id: string;
   title: string;
-  completed: boolean;
+  completed: boolean;      // Derived from statusCategory === 'complete'
   notes?: string;
-  listId: string;
+  listId?: string;         // Optional - reserved for future use
+  status: string;          // StatusConfig.id
+  statusCategory: StatusCategory;  // Denormalized for performance
   createdAt?: Date;
   updatedAt?: Date;
 }
