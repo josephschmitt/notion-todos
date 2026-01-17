@@ -4,18 +4,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 
 import { TodoList } from '../../components/todo/TodoList';
-import { Todo } from '../../types/todo';
-import { mockStatusGroups, getOptionsForGroup } from '../../mock';
+import { Todo, StatusOption } from '../../types/todo';
+import { getDataSourceById } from '../../config/mockDataSources';
 import { useTodos } from '../../contexts/TodoContext';
 
 export default function CompletedStatusScreen() {
   const { statusId } = useLocalSearchParams<{ statusId: string }>();
-  const { todos, toggleTodo } = useTodos();
+  const { todos, toggleTodo, currentDataSourceId } = useTodos();
+
+  // Get current data source
+  const currentDataSource = getDataSourceById(currentDataSourceId);
+  const mockStatusGroups = currentDataSource?.statusGroups || [];
+  const mockStatusOptions = currentDataSource?.statusOptions || [];
 
   // Find the status group
   const group = mockStatusGroups.find(g => g.id === statusId);
-  const options = group ? getOptionsForGroup(group) : [];
-  const optionIds = options.map(opt => opt.id);
+  const optionIds = group?.option_ids || [];
+  const options = optionIds
+    .map(id => mockStatusOptions.find(opt => opt.id === id))
+    .filter((opt): opt is StatusOption => opt !== undefined);
 
   // Filter todos by any option in this group
   const statusTodos = todos.filter(todo => optionIds.includes(todo.status));

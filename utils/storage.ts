@@ -3,6 +3,7 @@ import type { CollapsedSectionsState } from '../types/todo';
 
 const STORAGE_KEYS = {
   COLLAPSED_SECTIONS: '@notion-todos/collapsed-sections',
+  DATA_SOURCE: '@notion-todos/data-source',
 };
 
 // Default collapsed state (works for both flat and nested)
@@ -53,4 +54,23 @@ export function getStatusOptionCollapseKey(groupId: string, optionId: string): s
 // Helper: Check if a key is for a status option (contains colon separator)
 export function isStatusOptionKey(key: string): boolean {
   return key.includes(':');
+}
+
+// Data source persistence (for dev mode)
+export async function loadSelectedDataSource(): Promise<string | null> {
+  try {
+    const value = await AsyncStorage.getItem(STORAGE_KEYS.DATA_SOURCE);
+    return value;
+  } catch (error) {
+    console.error('Error loading selected data source:', error);
+    return null;
+  }
+}
+
+export async function saveSelectedDataSource(dataSourceId: string): Promise<void> {
+  try {
+    await AsyncStorage.setItem(STORAGE_KEYS.DATA_SOURCE, dataSourceId);
+  } catch (error) {
+    console.error('Error saving selected data source:', error);
+  }
 }

@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 
 import { StatusSection } from '../components/status/StatusSection';
 import { NestedStatusSection } from '../components/status/NestedStatusSection';
+import { DevTools } from '../components/dev/DevTools';
 import {
   Todo,
   StatusGroup,
@@ -14,14 +15,29 @@ import {
   LegacyStatusGroup,
   CollapsedSectionsState,
 } from '../types/todo';
-import { mockStatusGroups, mockStatusOptions, getOptionsForGroup } from '../mock';
+import { getDataSourceById } from '../config/mockDataSources';
 import { loadCollapsedSections, saveCollapsedSections, getStatusOptionCollapseKey } from '../utils/storage';
 import { useTodos } from '../contexts/TodoContext';
 
+// Helper to get options for a group
+function getOptionsForGroup(
+  group: StatusGroup,
+  statusOptions: StatusOption[]
+): StatusOption[] {
+  return group.option_ids
+    .map(id => statusOptions.find(opt => opt.id === id))
+    .filter((opt): opt is StatusOption => opt !== undefined);
+}
+
 export default function TodosScreen() {
   const router = useRouter();
-  const { todos, toggleTodo } = useTodos();
+  const { todos, toggleTodo, currentDataSourceId } = useTodos();
   const [collapsedSections, setCollapsedSections] = useState<CollapsedSectionsState>({});
+
+  // Get current data source
+  const currentDataSource = getDataSourceById(currentDataSourceId);
+  const mockStatusGroups = currentDataSource?.statusGroups || [];
+  const mockStatusOptions = currentDataSource?.statusOptions || [];
 
   // Load collapsed sections state on mount
   useEffect(() => {
@@ -37,7 +53,7 @@ export default function TodosScreen() {
     const categoryViews: StatusCategoryView[] = [];
 
     mockStatusGroups.forEach(group => {
-      const options = getOptionsForGroup(group);
+      const options = getOptionsForGroup(group, mockStatusOptions);
       const statusSections: StatusSectionView[] = [];
       let totalCount = 0;
 
@@ -107,6 +123,7 @@ export default function TodosScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <DevTools />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
