@@ -58,6 +58,11 @@ export function SubStatusSection({
           />
         </View>
       )}
+
+      {/* Bottom border with insets */}
+      <View style={styles.bottomBorderContainer}>
+        <View style={styles.bottomBorder} />
+      </View>
     </View>
   );
 }
@@ -72,8 +77,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16, // Match task padding
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
   },
   headerLeft: {
     flexDirection: 'row',
@@ -98,5 +101,13 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     borderLeftWidth: 4,
+  },
+  bottomBorderContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+  bottomBorder: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
   },
 });
