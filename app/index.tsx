@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import { StatusSection } from '../components/status/StatusSection';
-import { NestedStatusSection } from '../components/status/NestedStatusSection';
+import { SubStatusSection } from '../components/status/SubStatusSection';
+import { CategoryFooter } from '../components/status/CategoryFooter';
 import {
   Todo,
   StatusGroup,
@@ -90,22 +91,29 @@ export default function TodosScreen() {
 
           // Auto-detect: render based on data structure
           if (hasMultipleOptions) {
-            // Multiple status options → use nested component
+            // Multiple status options → render flat sections with category footer
             return (
-              <NestedStatusSection
-                key={group.id}
-                group={group}
-                statusSections={statusSections}
-                totalCount={totalCount}
-                isCollapsed={collapsedSections[group.id] || false}
-                collapsedOptions={collapsedSections}
-                onToggleGroup={() => handleToggleSection(group.id)}
-                onToggleOption={(optionId) => handleToggleStatusOption(group.id, optionId)}
-                onNavigateToGroup={() => handleNavigateToStatus(group.id)}
-                onToggleTodo={handleToggleTodo}
-                onPressTodo={handlePressTodo}
-                onLongPressTodo={handleLongPressTodo}
-              />
+              <React.Fragment key={group.id}>
+                {/* Render all status options for this category */}
+                {statusSections.map(section => (
+                  <SubStatusSection
+                    key={section.option.id}
+                    section={section}
+                    isCollapsed={collapsedSections[section.option.id] || false}
+                    onToggleCollapse={() => handleToggleStatusOption(group.id, section.option.id)}
+                    onToggleTodo={handleToggleTodo}
+                    onPressTodo={handlePressTodo}
+                    onLongPressTodo={handleLongPressTodo}
+                  />
+                ))}
+
+                {/* Category footer link */}
+                <CategoryFooter
+                  group={group}
+                  totalCount={totalCount}
+                  onNavigate={() => handleNavigateToStatus(group.id)}
+                />
+              </React.Fragment>
             );
           } else {
             // Single option → use existing StatusSection component
