@@ -33,6 +33,22 @@ npm run android
 npx tsc --noEmit
 ```
 
+## Git Workflow
+
+**Commit frequently as you work**. When using the TodoWrite tool to track tasks, commit to git after completing each todo item. This creates a clear history of incremental progress.
+
+**Commit guidelines**:
+- After completing each todo item, stage and commit the changes
+- Use descriptive commit messages that explain what was accomplished
+- Follow the format: `<type>: <description>` (e.g., `feat: add todo item component`, `fix: resolve checkbox styling issue`)
+- Include `Co-Authored-By: Claude <noreply@anthropic.com>` in commit messages
+- Don't wait to batch multiple completed todos into one commit - commit after each one
+
+**When NOT to commit**:
+- Don't commit broken or incomplete code
+- Don't commit if tests are failing (unless explicitly working on fixing tests)
+- Don't commit sensitive information or credentials
+
 ## Web Development from iPad
 
 The web version runs on LAN with `--host lan` for development from iPad or other devices:
