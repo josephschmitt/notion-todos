@@ -13,6 +13,15 @@ export default function RootLayout() {
             headerTitleStyle: { fontWeight: 'bold' },
           }}
         />
+        <Stack.Screen
+          name="completed/[statusId]"
+          options={{
+            presentation: 'modal',
+            title: 'Completed',
+            headerStyle: { backgroundColor: '#f9fafb' },
+            headerTitleStyle: { fontWeight: 'bold' },
+          }}
+        />
       </Stack>
     </SafeAreaProvider>
   );
