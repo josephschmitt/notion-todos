@@ -70,26 +70,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: '#F9FAFB', // Same as top-level sections
-    borderRadius: 6,
-    minHeight: 56, // Same as top-level sections
+    paddingHorizontal: 16, // Match task padding
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12, // Match task checkbox marginRight
     flex: 1,
   },
   disclosureIcon: {
-    width: 24, // Same as top-level sections
-    marginTop: 1,
+    width: 24, // Same size as checkbox
+    marginTop: 2, // Match checkbox marginTop
   },
   headerTitle: {
-    fontSize: 18, // Same as top-level sections
+    fontSize: 18,
     fontWeight: '600',
-    color: '#111827', // Same as top-level sections
+    color: '#111827',
   },
   taskCount: {
     fontSize: 14,
@@ -98,16 +97,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   listContainer: {
-    backgroundColor: '#ffffff',
-    borderRadius: 6,
-    overflow: 'hidden',
-    borderLeftWidth: 4, // Same as top-level sections
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-    marginTop: 8,
-    marginLeft: 12, // Indent for todos from section edge
+    borderLeftWidth: 4,
   },
 });
