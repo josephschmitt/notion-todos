@@ -44,8 +44,8 @@ export function DevTools() {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 50,
-    right: 16,
+    top: 8,
+    right: 8,
     zIndex: 1000,
   },
   button: {
