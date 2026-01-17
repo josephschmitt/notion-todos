@@ -90,7 +90,10 @@ interface TodoList {
 - When adding new todo or list properties, they **must** map to Notion database property types
 - Notion is the backing store - all schema changes must be compatible with Notion's data model
 - Never add fields that cannot be represented in Notion databases
-- Reference Notion's property types: Text, Checkbox, Date, Select, Multi-select, Relation, etc.
+- Reference the [Notion Property Object documentation](https://developers.notion.com/reference/property-object) for available property types
+- Available property types include: checkbox, created_by, created_time, date, email, files, formula, last_edited_by, last_edited_time, multi_select, number, people, phone_number, place, relation, rich_text, rollup, select, status, title, url
+- Note: The `status` property type provides workflow states with grouping capabilities, useful for todo organization
+- Every Notion database requires exactly one `title` property
 
 ### State Management
 
