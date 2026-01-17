@@ -89,9 +89,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   disclosureTriangle: {
-    fontSize: 16,
+    fontSize: 24,
     color: '#6B7280',
-    width: 20,
+    width: 24,
   },
   headerTitle: {
     fontSize: 18,
