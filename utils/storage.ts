@@ -8,18 +8,18 @@ const STORAGE_KEYS = {
 
 // Default collapsed state (works for both flat and nested)
 const DEFAULT_COLLAPSED_STATE: CollapsedSectionsState = {
-  // Groups
+  // Groups (for single-option groups using StatusSection)
   'in-progress-group': false,
   'not-started-group': false,
   'done-group': true,
 
-  // Status options (only used when group has multiple options)
-  'in-progress-group:in-progress-active': false,
-  'in-progress-group:blocked': false,
-  'not-started-group:todo': false,
-  'not-started-group:backlog': false,
-  'done-group:completed': false,
-  'done-group:abandoned': false,
+  // Individual status options (for multi-option groups using SubStatusSection)
+  'in-progress-active': false,
+  'blocked': false,
+  'todo': false,
+  'backlog': false,
+  'completed': false,
+  'abandoned': false,
 };
 
 export async function loadCollapsedSections(): Promise<CollapsedSectionsState> {
@@ -46,14 +46,10 @@ export async function saveCollapsedSections(state: CollapsedSectionsState): Prom
   }
 }
 
-// Helper: Generate collapse key for a status option within a group
+// Helper: Generate collapse key for a status option
+// Simplified to just use option ID (no longer composite key)
 export function getStatusOptionCollapseKey(groupId: string, optionId: string): string {
-  return `${groupId}:${optionId}`;
-}
-
-// Helper: Check if a key is for a status option (contains colon separator)
-export function isStatusOptionKey(key: string): boolean {
-  return key.includes(':');
+  return optionId;
 }
 
 // Data source persistence (for dev mode)
