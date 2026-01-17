@@ -60,6 +60,13 @@ export function StatusSection({
         </TouchableOpacity>
       </View>
 
+      {/* Border between header and tasks */}
+      {!isCollapsed && (
+        <View style={styles.borderContainer}>
+          <View style={styles.border} />
+        </View>
+      )}
+
       {/* Conditionally render todo list */}
       {!isCollapsed && (
         <View style={[styles.listContainer, { borderLeftColor: status.color }]}>
@@ -70,11 +77,6 @@ export function StatusSection({
           />
         </View>
       )}
-
-      {/* Bottom border with insets */}
-      <View style={styles.bottomBorderContainer}>
-        <View style={styles.bottomBorder} />
-      </View>
     </View>
   );
 }
@@ -117,11 +119,11 @@ const styles = StyleSheet.create({
   listContainer: {
     borderLeftWidth: 4,
   },
-  bottomBorderContainer: {
+  borderContainer: {
     paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingVertical: 12,
   },
-  bottomBorder: {
+  border: {
     height: 1,
     backgroundColor: '#E5E7EB',
   },
