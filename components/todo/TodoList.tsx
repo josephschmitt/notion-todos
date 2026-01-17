@@ -28,7 +28,6 @@ export function TodoList({ todos, onToggleTodo, onPressTodo }: TodoListProps) {
         data={todos}
         renderItem={renderTodoItem}
         keyExtractor={(item) => item.id}
-        ItemSeparatorComponent={renderSeparator}
         scrollEnabled={false}
       />
     </View>
