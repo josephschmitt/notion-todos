@@ -12,8 +12,40 @@ export interface StatusConfig {
   icon?: string;        // Optional emoji
 }
 
-// Status group for rendering
+// Notion API: Status group structure
+// Represents the three main categories: "To-do", "In Progress", "Complete"
 export interface StatusGroup {
+  id: string;
+  name: string;           // "To-do", "In Progress", or "Complete"
+  color: string;
+  option_ids: string[];   // References to status options in this group
+}
+
+// Notion API: Status option structure
+// Represents individual statuses within a group (e.g., "Blocked", "Todo", "Done")
+export interface StatusOption {
+  id: string;
+  name: string;           // e.g., "In-Progress", "Blocked", "Todo"
+  color: string;
+}
+
+// View model: Status category with todos for rendering
+export interface StatusCategoryView {
+  group: StatusGroup;
+  statusSections: StatusSectionView[];
+  totalCount: number;
+}
+
+// View model: Individual status section with todos for rendering
+export interface StatusSectionView {
+  option: StatusOption;
+  todos: Todo[];
+  count: number;
+}
+
+// Legacy: Status group for simple rendering (backward compatibility)
+// Used when groups have only one option (flat structure)
+export interface LegacyStatusGroup {
   status: StatusConfig;
   todos: Todo[];
   count: number;

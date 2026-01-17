@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Todo } from '../types/todo';
-import { mockTodos } from '../mock/todoData';
+import { mockTodos } from '../mock';
 
 interface TodoContextType {
   todos: Todo[];

@@ -1,43 +1,50 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { LegacyStatusGroup, Todo } from '../../types/todo';
-import { TodoList } from '../todo/TodoList';
+import { StatusGroup, StatusSectionView, CollapsedSectionsState, Todo } from '../../types/todo';
+import { SubStatusSection } from './SubStatusSection';
+import { getStatusOptionCollapseKey } from '../../utils/storage';
 
-interface StatusSectionProps {
-  statusGroup: LegacyStatusGroup;
+interface NestedStatusSectionProps {
+  group: StatusGroup;
+  statusSections: StatusSectionView[];
+  totalCount: number;
   isCollapsed: boolean;
-  onToggleCollapse: () => void;
-  onNavigateToStatus: () => void;
+  collapsedOptions: CollapsedSectionsState;
+  onToggleGroup: () => void;
+  onToggleOption: (optionId: string) => void;
+  onNavigateToGroup: () => void;
   onToggleTodo: (id: string) => void;
   onPressTodo?: (todo: Todo) => void;
-  onLongPressTodo?: (todo: Todo) => void;  // For status picker (future)
+  onLongPressTodo?: (todo: Todo) => void;
 }
 
-export function StatusSection({
-  statusGroup,
+export function NestedStatusSection({
+  group,
+  statusSections,
+  totalCount,
   isCollapsed,
-  onToggleCollapse,
-  onNavigateToStatus,
+  collapsedOptions,
+  onToggleGroup,
+  onToggleOption,
+  onNavigateToGroup,
   onToggleTodo,
   onPressTodo,
   onLongPressTodo,
-}: StatusSectionProps) {
-  const { status, todos, count } = statusGroup;
-
-  // Don't render empty sections
-  if (count === 0) {
+}: NestedStatusSectionProps) {
+  // Don't render empty groups
+  if (totalCount === 0) {
     return null;
   }
 
   return (
     <View style={styles.container}>
-      {/* Header with two tappable areas */}
+      {/* Parent group header - same style as StatusSection */}
       <View style={styles.header}>
         {/* Left area: Disclosure triangle + Title → Tap to collapse/expand */}
         <TouchableOpacity
           style={styles.headerLeft}
-          onPress={onToggleCollapse}
+          onPress={onToggleGroup}
           activeOpacity={0.7}
         >
           <Ionicons
@@ -46,28 +53,37 @@ export function StatusSection({
             color="#6B7280"
             style={styles.disclosureIcon}
           />
-          <Text style={styles.headerTitle}>{status.name}</Text>
+          <Text style={styles.headerTitle}>{group.name}</Text>
         </TouchableOpacity>
 
         {/* Right area: Count + Chevron → Tap to navigate */}
         <TouchableOpacity
           style={styles.headerRight}
-          onPress={onNavigateToStatus}
+          onPress={onNavigateToGroup}
           activeOpacity={0.7}
         >
-          <Text style={styles.taskCount}>{count} tasks</Text>
+          <Text style={styles.taskCount}>{totalCount} tasks</Text>
           <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
         </TouchableOpacity>
       </View>
 
-      {/* Conditionally render todo list */}
+      {/* Render sub-sections when not collapsed */}
       {!isCollapsed && (
-        <View style={[styles.listContainer, { borderLeftColor: status.color }]}>
-          <TodoList
-            todos={todos}
-            onToggleTodo={onToggleTodo}
-            onPressTodo={onPressTodo}
-          />
+        <View style={styles.subSectionsContainer}>
+          {statusSections.map((section) => {
+            const collapseKey = getStatusOptionCollapseKey(group.id, section.option.id);
+            return (
+              <SubStatusSection
+                key={section.option.id}
+                section={section}
+                isCollapsed={collapsedOptions[collapseKey] || false}
+                onToggleCollapse={() => onToggleOption(section.option.id)}
+                onToggleTodo={onToggleTodo}
+                onPressTodo={onPressTodo}
+                onLongPressTodo={onLongPressTodo}
+              />
+            );
+          })}
         </View>
       )}
     </View>
@@ -112,16 +128,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6B7280',
   },
-  listContainer: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    overflow: 'hidden',
-    borderLeftWidth: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+  subSectionsContainer: {
     marginTop: 8,
   },
 });

@@ -4,20 +4,24 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import { StatusSection } from '../components/status/StatusSection';
-import { Todo, StatusConfig, StatusGroup, CollapsedSectionsState } from '../types/todo';
-import { mockStatusConfigs } from '../mock/statusData';
-import { loadCollapsedSections, saveCollapsedSections } from '../utils/storage';
+import { NestedStatusSection } from '../components/status/NestedStatusSection';
+import {
+  Todo,
+  StatusGroup,
+  StatusOption,
+  StatusCategoryView,
+  StatusSectionView,
+  LegacyStatusGroup,
+  CollapsedSectionsState,
+} from '../types/todo';
+import { mockStatusGroups, mockStatusOptions, getOptionsForGroup } from '../mock';
+import { loadCollapsedSections, saveCollapsedSections, getStatusOptionCollapseKey } from '../utils/storage';
 import { useTodos } from '../contexts/TodoContext';
 
 export default function TodosScreen() {
   const router = useRouter();
   const { todos, toggleTodo } = useTodos();
-  const [statusConfigs] = useState<StatusConfig[]>(mockStatusConfigs);
-  const [collapsedSections, setCollapsedSections] = useState<CollapsedSectionsState>({
-    'in-progress': false,
-    'not-started': false,
-    'done': true,
-  });
+  const [collapsedSections, setCollapsedSections] = useState<CollapsedSectionsState>({});
 
   // Load collapsed sections state on mount
   useEffect(() => {
@@ -28,29 +32,38 @@ export default function TodosScreen() {
     loadState();
   }, []);
 
-  // Group todos by status
-  const groupTodosByStatus = (): StatusGroup[] => {
-    const groups: StatusGroup[] = [];
+  // Build view models from Notion data structure
+  const buildStatusCategoryViews = (): StatusCategoryView[] => {
+    const categoryViews: StatusCategoryView[] = [];
 
-    statusConfigs.forEach(status => {
-      const statusTodos = todos.filter(todo => todo.status === status.id);
+    mockStatusGroups.forEach(group => {
+      const options = getOptionsForGroup(group);
+      const statusSections: StatusSectionView[] = [];
+      let totalCount = 0;
 
-      if (statusTodos.length > 0) {
-        groups.push({
-          status,
-          todos: statusTodos,
-          count: statusTodos.length,
+      options.forEach(option => {
+        const optionTodos = todos.filter(todo => todo.status === option.id);
+
+        if (optionTodos.length > 0) {
+          statusSections.push({
+            option,
+            todos: optionTodos,
+            count: optionTodos.length,
+          });
+          totalCount += optionTodos.length;
+        }
+      });
+
+      if (totalCount > 0) {
+        categoryViews.push({
+          group,
+          statusSections,
+          totalCount,
         });
       }
     });
 
-    // Sort: in_progress first, then todo, then complete
-    const categoryOrder = { in_progress: 0, todo: 1, complete: 2 };
-    groups.sort((a, b) =>
-      categoryOrder[a.status.category] - categoryOrder[b.status.category]
-    );
-
-    return groups;
+    return categoryViews;
   };
 
   const handleToggleTodo = (todoId: string) => {
@@ -67,20 +80,30 @@ export default function TodosScreen() {
     console.log('Long pressed todo:', todo.title);
   };
 
-  const handleToggleSection = async (statusId: string) => {
+  const handleToggleSection = async (groupId: string) => {
     const newState = {
       ...collapsedSections,
-      [statusId]: !collapsedSections[statusId],
+      [groupId]: !collapsedSections[groupId],
     };
     setCollapsedSections(newState);
     await saveCollapsedSections(newState);
   };
 
-  const handleNavigateToStatus = (statusId: string) => {
-    router.push(`/completed/${statusId}`);
+  const handleToggleStatusOption = async (groupId: string, optionId: string) => {
+    const key = getStatusOptionCollapseKey(groupId, optionId);
+    const newState = {
+      ...collapsedSections,
+      [key]: !collapsedSections[key],
+    };
+    setCollapsedSections(newState);
+    await saveCollapsedSections(newState);
   };
 
-  const statusGroups = groupTodosByStatus();
+  const handleNavigateToStatus = (groupId: string) => {
+    router.push(`/completed/${groupId}`);
+  };
+
+  const categoryViews = buildStatusCategoryViews();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -88,18 +111,56 @@ export default function TodosScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
       >
-        {statusGroups.map(group => (
-          <StatusSection
-            key={group.status.id}
-            statusGroup={group}
-            isCollapsed={collapsedSections[group.status.id] || false}
-            onToggleCollapse={() => handleToggleSection(group.status.id)}
-            onNavigateToStatus={() => handleNavigateToStatus(group.status.id)}
-            onToggleTodo={handleToggleTodo}
-            onPressTodo={handlePressTodo}
-            onLongPressTodo={handleLongPressTodo}
-          />
-        ))}
+        {categoryViews.map(categoryView => {
+          const { group, statusSections, totalCount } = categoryView;
+          const hasMultipleOptions = group.option_ids.length > 1;
+
+          // Auto-detect: render based on data structure
+          if (hasMultipleOptions) {
+            // Multiple status options → use nested component
+            return (
+              <NestedStatusSection
+                key={group.id}
+                group={group}
+                statusSections={statusSections}
+                totalCount={totalCount}
+                isCollapsed={collapsedSections[group.id] || false}
+                collapsedOptions={collapsedSections}
+                onToggleGroup={() => handleToggleSection(group.id)}
+                onToggleOption={(optionId) => handleToggleStatusOption(group.id, optionId)}
+                onNavigateToGroup={() => handleNavigateToStatus(group.id)}
+                onToggleTodo={handleToggleTodo}
+                onPressTodo={handlePressTodo}
+                onLongPressTodo={handleLongPressTodo}
+              />
+            );
+          } else {
+            // Single option → use existing StatusSection component
+            const singleSection = statusSections[0];
+            const legacyGroup: LegacyStatusGroup = {
+              status: {
+                id: singleSection.option.id,
+                name: group.name,
+                category: 'todo', // Will be properly mapped in future
+                color: singleSection.option.color,
+              },
+              todos: singleSection.todos,
+              count: singleSection.count,
+            };
+            return (
+              <StatusSection
+                key={group.id}
+                statusGroup={legacyGroup}
+                isCollapsed={collapsedSections[group.id] || false}
+                onToggleCollapse={() => handleToggleSection(group.id)}
+                onNavigateToStatus={() => handleNavigateToStatus(group.id)}
+                onToggleTodo={handleToggleTodo}
+                onPressTodo={handlePressTodo}
+                onLongPressTodo={handleLongPressTodo}
+              />
+            );
+          }
+        })}
       </ScrollView>
     </SafeAreaView>
   );

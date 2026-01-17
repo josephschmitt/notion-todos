@@ -5,18 +5,20 @@ import { useLocalSearchParams } from 'expo-router';
 
 import { TodoList } from '../../components/todo/TodoList';
 import { Todo } from '../../types/todo';
-import { getStatusById } from '../../mock/statusData';
+import { mockStatusGroups, getOptionsForGroup } from '../../mock';
 import { useTodos } from '../../contexts/TodoContext';
 
 export default function CompletedStatusScreen() {
   const { statusId } = useLocalSearchParams<{ statusId: string }>();
   const { todos, toggleTodo } = useTodos();
 
-  // Find the status config
-  const status = getStatusById(statusId || '');
+  // Find the status group
+  const group = mockStatusGroups.find(g => g.id === statusId);
+  const options = group ? getOptionsForGroup(group) : [];
+  const optionIds = options.map(opt => opt.id);
 
-  // Filter todos by this status
-  const statusTodos = todos.filter(todo => todo.status === statusId);
+  // Filter todos by any option in this group
+  const statusTodos = todos.filter(todo => optionIds.includes(todo.status));
 
   const handleToggleTodo = (todoId: string) => {
     toggleTodo(todoId);
@@ -27,11 +29,11 @@ export default function CompletedStatusScreen() {
     console.log('Pressed todo:', todo.title);
   };
 
-  if (!status) {
+  if (!group) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Status not found</Text>
+          <Text style={styles.errorText}>Status group not found</Text>
         </View>
       </SafeAreaView>
     );
@@ -45,13 +47,13 @@ export default function CompletedStatusScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>{status.name}</Text>
+          <Text style={styles.title}>{group.name}</Text>
           <Text style={styles.count}>{statusTodos.length} tasks</Text>
         </View>
 
         {/* Todo List */}
         {statusTodos.length > 0 ? (
-          <View style={[styles.listContainer, { borderLeftColor: status.color }]}>
+          <View style={[styles.listContainer, { borderLeftColor: group.color }]}>
             <TodoList
               todos={statusTodos}
               onToggleTodo={handleToggleTodo}
@@ -60,7 +62,7 @@ export default function CompletedStatusScreen() {
           </View>
         ) : (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No tasks in this status</Text>
+            <Text style={styles.emptyText}>No tasks in this group</Text>
           </View>
         )}
       </ScrollView>

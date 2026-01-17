@@ -1,33 +1,42 @@
-import { StatusConfig } from '../types/todo';
+import { StatusGroup, StatusOption } from '../types/todo';
 
-// Three minimal status configurations matching Notion's status system
-export const mockStatusConfigs: StatusConfig[] = [
+// Simple/flat structure: one option per group
+// This represents the basic three-status system
+export const mockStatusOptions: StatusOption[] = [
+  { id: 'not-started', name: 'Not Started', color: '#6B7280' },
+  { id: 'in-progress', name: 'In Progress', color: '#3B82F6' },
+  { id: 'done', name: 'Done', color: '#10B981' },
+];
+
+export const mockStatusGroups: StatusGroup[] = [
   {
-    id: 'not-started',
+    id: 'not-started-group',
     name: 'Not Started',
-    category: 'todo',
-    color: '#6B7280',  // Gray
+    color: '#6B7280',
+    option_ids: ['not-started'],  // Only one option
   },
   {
-    id: 'in-progress',
+    id: 'in-progress-group',
     name: 'In Progress',
-    category: 'in_progress',
-    color: '#3B82F6',  // Blue
+    color: '#3B82F6',
+    option_ids: ['in-progress'],  // Only one option
   },
   {
-    id: 'done',
+    id: 'done-group',
     name: 'Done',
-    category: 'complete',
-    color: '#10B981',  // Green
+    color: '#10B981',
+    option_ids: ['done'],  // Only one option
   },
 ];
 
-// Helper function to get status config by id
-export const getStatusById = (statusId: string): StatusConfig | undefined => {
-  return mockStatusConfigs.find(status => status.id === statusId);
+// Helper: Get option by id
+export const getStatusOptionById = (optionId: string): StatusOption | undefined => {
+  return mockStatusOptions.find(o => o.id === optionId);
 };
 
-// Helper function to get status config by category
-export const getStatusByCategory = (category: string): StatusConfig | undefined => {
-  return mockStatusConfigs.find(status => status.category === category);
+// Helper: Get options for a group
+export const getOptionsForGroup = (group: StatusGroup): StatusOption[] => {
+  return group.option_ids
+    .map(id => getStatusOptionById(id))
+    .filter((opt): opt is StatusOption => opt !== undefined);
 };
