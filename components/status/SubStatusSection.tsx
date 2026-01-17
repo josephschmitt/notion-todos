@@ -39,7 +39,7 @@ export function SubStatusSection({
         <View style={styles.headerLeft}>
           <Ionicons
             name={isCollapsed ? 'chevron-forward' : 'chevron-down'}
-            size={20}
+            size={24}
             color="#6B7280"
             style={styles.disclosureIcon}
           />
@@ -65,7 +65,6 @@ export function SubStatusSection({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 12,
-    marginLeft: 16, // Indented from parent
   },
   header: {
     flexDirection: 'row',
@@ -73,9 +72,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: '#FAFBFC', // Lighter than parent
+    backgroundColor: '#F9FAFB', // Same as top-level sections
     borderRadius: 6,
-    minHeight: 40, // Smaller than parent (56px)
+    minHeight: 56, // Same as top-level sections
   },
   headerLeft: {
     flexDirection: 'row',
@@ -84,13 +83,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   disclosureIcon: {
-    width: 20, // Smaller than parent (24px)
+    width: 24, // Same as top-level sections
     marginTop: 1,
   },
   headerTitle: {
-    fontSize: 15, // Smaller than parent (18px)
-    fontWeight: '500',
-    color: '#374151', // Slightly lighter than parent
+    fontSize: 18, // Same as top-level sections
+    fontWeight: '600',
+    color: '#111827', // Same as top-level sections
   },
   taskCount: {
     fontSize: 14,
@@ -102,13 +101,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderRadius: 6,
     overflow: 'hidden',
-    borderLeftWidth: 3, // Thinner than parent (4px)
+    borderLeftWidth: 4, // Same as top-level sections
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
     marginTop: 8,
-    marginLeft: 28, // Additional indent for todos (total 44px from parent edge)
+    marginLeft: 12, // Indent for todos from section edge
   },
 });
