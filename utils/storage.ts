@@ -1,10 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { CollapsedSectionsState } from '../types/todo';
 
 const STORAGE_KEYS = {
   COLLAPSED_SECTIONS: '@notion-todos/collapsed-sections',
 };
-
-export type CollapsedSectionsState = Record<string, boolean>;
 
 const DEFAULT_COLLAPSED_STATE: CollapsedSectionsState = {
   'in-progress': false,

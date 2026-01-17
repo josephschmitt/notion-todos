@@ -51,3 +51,6 @@ export interface TodoActions {
   updateTodo: (id: string, updates: Partial<Omit<Todo, 'id'>>) => void;
   deleteTodo: (id: string) => void;
 }
+
+// Collapsed sections state for UI persistence
+export type CollapsedSectionsState = Record<string, boolean>;
