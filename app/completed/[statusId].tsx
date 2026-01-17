@@ -108,10 +108,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    padding: 16,
+    paddingVertical: 16,
   },
   header: {
     marginBottom: 16,
+    paddingHorizontal: 16,
   },
   title: {
     fontSize: 28,
@@ -124,7 +125,8 @@ const styles = StyleSheet.create({
     color: '#6B7280',
   },
   emptyContainer: {
-    padding: 32,
+    paddingVertical: 32,
+    paddingHorizontal: 16,
     alignItems: 'center',
   },
   emptyText: {
