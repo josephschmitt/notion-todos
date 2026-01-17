@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 
-import { TodoList } from '../../components/todo/TodoList';
-import { SubStatusSection } from '../../components/status/SubStatusSection';
-import { Todo, StatusOption, StatusSectionView, CollapsedSectionsState } from '../../types/todo';
+import { StatusGroupContent } from '../../components/status/StatusGroupContent';
+import { Todo, CollapsedSectionsState } from '../../types/todo';
 import { getDataSourceById } from '../../config/mockDataSources';
 import { useTodos } from '../../contexts/TodoContext';
 import { loadCollapsedSections, saveCollapsedSections, getStatusOptionCollapseKey } from '../../utils/storage';
+import { buildStatusSections } from '../../utils/statusHelpers';
 
 export default function CompletedStatusScreen() {
   const { statusId } = useLocalSearchParams<{ statusId: string }>();
@@ -29,29 +29,11 @@ export default function CompletedStatusScreen() {
     loadState();
   }, []);
 
-  // Find the status group
+  // Find the status group and build sections
   const group = mockStatusGroups.find(g => g.id === statusId);
-  const optionIds = group?.option_ids || [];
-  const hasMultipleOptions = optionIds.length > 1;
-
-  // Build status sections
-  const statusSections: StatusSectionView[] = [];
-  let totalCount = 0;
-
-  optionIds.forEach(optionId => {
-    const option = mockStatusOptions.find(opt => opt.id === optionId);
-    if (option) {
-      const optionTodos = todos.filter(todo => todo.status === option.id);
-      if (optionTodos.length > 0) {
-        statusSections.push({
-          option,
-          todos: optionTodos,
-          count: optionTodos.length,
-        });
-        totalCount += optionTodos.length;
-      }
-    }
-  });
+  const { statusSections, totalCount } = group
+    ? buildStatusSections(group, mockStatusOptions, todos)
+    : { statusSections: [], totalCount: 0 };
 
   const handleToggleTodo = (todoId: string) => {
     toggleTodo(todoId);
@@ -96,34 +78,15 @@ export default function CompletedStatusScreen() {
         </View>
 
         {/* Content - nested sections or flat list */}
-        {totalCount > 0 ? (
-          hasMultipleOptions ? (
-            // Multiple status options - show nested sections
-            <>
-              {statusSections.map((section) => {
-                const collapseKey = getStatusOptionCollapseKey(group.id, section.option.id);
-                return (
-                  <SubStatusSection
-                    key={section.option.id}
-                    section={section}
-                    isCollapsed={collapsedSections[collapseKey] || false}
-                    onToggleCollapse={() => handleToggleStatusOption(section.option.id)}
-                    onToggleTodo={handleToggleTodo}
-                    onPressTodo={handlePressTodo}
-                  />
-                );
-              })}
-            </>
-          ) : (
-            // Single option - show flat list
-            <View style={[styles.listContainer, { borderLeftColor: group.color }]}>
-              <TodoList
-                todos={statusSections[0]?.todos || []}
-                onToggleTodo={handleToggleTodo}
-                onPressTodo={handlePressTodo}
-              />
-            </View>
-          )
+        {totalCount > 0 && group ? (
+          <StatusGroupContent
+            group={group}
+            statusSections={statusSections}
+            collapsedSections={collapsedSections}
+            onToggleOption={handleToggleStatusOption}
+            onToggleTodo={handleToggleTodo}
+            onPressTodo={handlePressTodo}
+          />
         ) : (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>No tasks in this group</Text>
@@ -157,17 +120,6 @@ const styles = StyleSheet.create({
   count: {
     fontSize: 16,
     color: '#6B7280',
-  },
-  listContainer: {
-    backgroundColor: '#ffffff',
-    borderRadius: 8,
-    overflow: 'hidden',
-    borderLeftWidth: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
   },
   emptyContainer: {
     padding: 32,

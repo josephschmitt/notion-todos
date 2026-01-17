@@ -16,17 +16,8 @@ import {
 } from '../types/todo';
 import { getDataSourceById } from '../config/mockDataSources';
 import { loadCollapsedSections, saveCollapsedSections, getStatusOptionCollapseKey } from '../utils/storage';
+import { buildStatusCategoryViews } from '../utils/statusHelpers';
 import { useTodos } from '../contexts/TodoContext';
-
-// Helper to get options for a group
-function getOptionsForGroup(
-  group: StatusGroup,
-  statusOptions: StatusOption[]
-): StatusOption[] {
-  return group.option_ids
-    .map(id => statusOptions.find(opt => opt.id === id))
-    .filter((opt): opt is StatusOption => opt !== undefined);
-}
 
 export default function TodosScreen() {
   const router = useRouter();
@@ -48,38 +39,7 @@ export default function TodosScreen() {
   }, []);
 
   // Build view models from Notion data structure
-  const buildStatusCategoryViews = (): StatusCategoryView[] => {
-    const categoryViews: StatusCategoryView[] = [];
-
-    mockStatusGroups.forEach(group => {
-      const options = getOptionsForGroup(group, mockStatusOptions);
-      const statusSections: StatusSectionView[] = [];
-      let totalCount = 0;
-
-      options.forEach(option => {
-        const optionTodos = todos.filter(todo => todo.status === option.id);
-
-        if (optionTodos.length > 0) {
-          statusSections.push({
-            option,
-            todos: optionTodos,
-            count: optionTodos.length,
-          });
-          totalCount += optionTodos.length;
-        }
-      });
-
-      if (totalCount > 0) {
-        categoryViews.push({
-          group,
-          statusSections,
-          totalCount,
-        });
-      }
-    });
-
-    return categoryViews;
-  };
+  const categoryViews = buildStatusCategoryViews(mockStatusGroups, mockStatusOptions, todos);
 
   const handleToggleTodo = (todoId: string) => {
     toggleTodo(todoId);
@@ -117,8 +77,6 @@ export default function TodosScreen() {
   const handleNavigateToStatus = (groupId: string) => {
     router.push(`/completed/${groupId}`);
   };
-
-  const categoryViews = buildStatusCategoryViews();
 
   return (
     <SafeAreaView style={styles.container}>

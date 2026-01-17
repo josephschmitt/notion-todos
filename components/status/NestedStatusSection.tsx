@@ -2,8 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusGroup, StatusSectionView, CollapsedSectionsState, Todo } from '../../types/todo';
-import { SubStatusSection } from './SubStatusSection';
-import { getStatusOptionCollapseKey } from '../../utils/storage';
+import { StatusGroupContent } from './StatusGroupContent';
 
 interface NestedStatusSectionProps {
   group: StatusGroup;
@@ -70,20 +69,15 @@ export function NestedStatusSection({
       {/* Render sub-sections when not collapsed */}
       {!isCollapsed && (
         <View style={styles.subSectionsContainer}>
-          {statusSections.map((section) => {
-            const collapseKey = getStatusOptionCollapseKey(group.id, section.option.id);
-            return (
-              <SubStatusSection
-                key={section.option.id}
-                section={section}
-                isCollapsed={collapsedOptions[collapseKey] || false}
-                onToggleCollapse={() => onToggleOption(section.option.id)}
-                onToggleTodo={onToggleTodo}
-                onPressTodo={onPressTodo}
-                onLongPressTodo={onLongPressTodo}
-              />
-            );
-          })}
+          <StatusGroupContent
+            group={group}
+            statusSections={statusSections}
+            collapsedSections={collapsedOptions}
+            onToggleOption={onToggleOption}
+            onToggleTodo={onToggleTodo}
+            onPressTodo={onPressTodo}
+            onLongPressTodo={onLongPressTodo}
+          />
         </View>
       )}
     </View>
