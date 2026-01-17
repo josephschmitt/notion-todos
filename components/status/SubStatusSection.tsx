@@ -77,7 +77,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16, // Match task padding
+    paddingLeft: 20, // 16 + 4 to account for border on listContainer
+    paddingRight: 16,
     paddingVertical: 8,
   },
   headerLeft: {
@@ -88,6 +89,7 @@ const styles = StyleSheet.create({
   },
   disclosureIcon: {
     width: 24, // Same size as checkbox
+    height: 24,
     marginTop: 2, // Match checkbox marginTop
   },
   headerTitle: {
@@ -105,7 +107,8 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
   },
   borderContainer: {
-    paddingHorizontal: 16,
+    paddingLeft: 20, // 16 + 4 to account for border on listContainer
+    paddingRight: 16,
     paddingTop: 8,
   },
   border: {
