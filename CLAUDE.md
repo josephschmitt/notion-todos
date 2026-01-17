@@ -49,6 +49,19 @@ npx tsc --noEmit
 - Don't commit if tests are failing (unless explicitly working on fixing tests)
 - Don't commit sensitive information or credentials
 
+## Verification Workflow
+
+After completing work on tasks, **always offer to start the web app** so the user can verify the changes.
+
+**Preferred method**: Use `npm run dev:web` which starts the development server with the in-app data source switcher for easy testing.
+
+The user may also request alternative startup methods:
+- `npm run web` - Standard web server on LAN
+- `npm start` - Tunnel mode for remote access
+- `npm run start:local` - Local development server
+- `npm run ios` - iOS Simulator
+- `npm run android` - Android Emulator
+
 ## Web Development from iPad
 
 The web version runs on LAN with `--host lan` for development from iPad or other devices:
