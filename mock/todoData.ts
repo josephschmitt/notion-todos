@@ -25,25 +25,19 @@ export const mockLists: TodoList[] = [
   },
 ];
 
-// Mock todos
+// Mock todos with status-based organization
 export const mockTodos: Todo[] = [
-  // Work todos
+  // In Progress todos
   {
     id: 'todo-1',
     title: 'Finish project proposal',
     completed: false,
     notes: 'Include budget estimates and timeline',
     listId: 'work-list',
+    status: 'in-progress',
+    statusCategory: 'in_progress',
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15'),
-  },
-  {
-    id: 'todo-2',
-    title: 'Review team performance',
-    completed: true,
-    listId: 'work-list',
-    createdAt: new Date('2024-01-14'),
-    updatedAt: new Date('2024-01-16'),
   },
   {
     id: 'todo-3',
@@ -51,35 +45,10 @@ export const mockTodos: Todo[] = [
     completed: false,
     notes: 'Coordinate with Sarah for availability',
     listId: 'work-list',
+    status: 'in-progress',
+    statusCategory: 'in_progress',
     createdAt: new Date('2024-01-16'),
     updatedAt: new Date('2024-01-16'),
-  },
-  {
-    id: 'todo-4',
-    title: 'Update documentation',
-    completed: false,
-    listId: 'work-list',
-    createdAt: new Date('2024-01-17'),
-    updatedAt: new Date('2024-01-17'),
-  },
-
-  // Personal todos
-  {
-    id: 'todo-5',
-    title: 'Buy groceries',
-    completed: true,
-    notes: 'Milk, eggs, bread, and vegetables',
-    listId: 'personal-list',
-    createdAt: new Date('2024-01-16'),
-    updatedAt: new Date('2024-01-17'),
-  },
-  {
-    id: 'todo-6',
-    title: 'Call mom',
-    completed: false,
-    listId: 'personal-list',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15'),
   },
   {
     id: 'todo-7',
@@ -87,17 +56,41 @@ export const mockTodos: Todo[] = [
     completed: false,
     notes: 'Check hotel availability and book flights',
     listId: 'personal-list',
+    status: 'in-progress',
+    statusCategory: 'in_progress',
     createdAt: new Date('2024-01-17'),
     updatedAt: new Date('2024-01-17'),
   },
 
-  // Ideas todos
+  // Not Started todos
+  {
+    id: 'todo-4',
+    title: 'Update documentation',
+    completed: false,
+    listId: 'work-list',
+    status: 'not-started',
+    statusCategory: 'todo',
+    createdAt: new Date('2024-01-17'),
+    updatedAt: new Date('2024-01-17'),
+  },
+  {
+    id: 'todo-6',
+    title: 'Call mom',
+    completed: false,
+    listId: 'personal-list',
+    status: 'not-started',
+    statusCategory: 'todo',
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15'),
+  },
   {
     id: 'todo-8',
     title: 'Learn React Native',
     completed: false,
     notes: 'Start with the official tutorial',
     listId: 'ideas-list',
+    status: 'not-started',
+    statusCategory: 'todo',
     createdAt: new Date('2024-01-12'),
     updatedAt: new Date('2024-01-12'),
   },
@@ -106,7 +99,32 @@ export const mockTodos: Todo[] = [
     title: 'Write blog post about productivity',
     completed: false,
     listId: 'ideas-list',
+    status: 'not-started',
+    statusCategory: 'todo',
     createdAt: new Date('2024-01-17'),
+    updatedAt: new Date('2024-01-17'),
+  },
+
+  // Done todos
+  {
+    id: 'todo-2',
+    title: 'Review team performance',
+    completed: true,
+    listId: 'work-list',
+    status: 'done',
+    statusCategory: 'complete',
+    createdAt: new Date('2024-01-14'),
+    updatedAt: new Date('2024-01-16'),
+  },
+  {
+    id: 'todo-5',
+    title: 'Buy groceries',
+    completed: true,
+    notes: 'Milk, eggs, bread, and vegetables',
+    listId: 'personal-list',
+    status: 'done',
+    statusCategory: 'complete',
+    createdAt: new Date('2024-01-16'),
     updatedAt: new Date('2024-01-17'),
   },
 ];
