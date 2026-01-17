@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   borderContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingTop: 8,
   },
   border: {
     height: 1,
