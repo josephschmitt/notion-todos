@@ -150,7 +150,7 @@ export default function TodosScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#ffffff',
   },
   scrollView: {
     flex: 1,
