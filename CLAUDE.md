@@ -62,6 +62,8 @@ The web version runs on LAN with `--host lan` for development from iPad or other
 
 ### Data Model (Notion-Compatible)
 
+**Critical Philosophy**: This app is a beautiful, UX-focused frontend for Notion databases. Notion will be the **cloud source of truth** for all data. We are merely providing an optimized todo-centric interface on top of Notion's backend.
+
 TypeScript interfaces in `types/todo.ts` are designed to match Notion's database structure for future integration. All data types must maintain this compatibility:
 
 ```typescript
@@ -84,7 +86,11 @@ interface TodoList {
 }
 ```
 
-**Critical**: When adding new todo properties, ensure they map to Notion database property types.
+**Critical Requirements**:
+- When adding new todo or list properties, they **must** map to Notion database property types
+- Notion is the backing store - all schema changes must be compatible with Notion's data model
+- Never add fields that cannot be represented in Notion databases
+- Reference Notion's property types: Text, Checkbox, Date, Select, Multi-select, Relation, etc.
 
 ### State Management
 
